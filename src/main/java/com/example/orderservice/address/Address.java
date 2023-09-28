@@ -39,7 +39,7 @@ public class Address {
     private Country country;
 
     @Column(
-            name = "name",
+            name = "postal_code",
             nullable = false,
             length = 6
     )
@@ -47,25 +47,25 @@ public class Address {
     private String postalCode;
 
     @Column(
-            name = "name",
+            name = "city",
             nullable = false
     )
     private String city;
 
     @Column(
-            name = "name",
+            name = "voivodeship",
             nullable = false
     )
     private String voivodeship;
 
     @Column(
-            name = "name",
+            name = "street",
             nullable = false
     )
     private String street;
 
     @Column(
-            name = "name",
+            name = "additional_information",
             nullable = false,
             length = 255
     )
