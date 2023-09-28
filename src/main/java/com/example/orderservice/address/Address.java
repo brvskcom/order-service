@@ -1,5 +1,6 @@
 package com.example.orderservice.address;
 
+import com.example.orderservice.order.Order;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,42 +33,23 @@ public class Address {
     )
     private Long id;
 
-    @Column(
-            name = "country",
-            nullable = false
-    )
-    private Country country;
-
-    @Column(
-            name = "postal_code",
-            nullable = false,
-            length = 6
-    )
-    @PostalCode
-    private String postalCode;
-
-    @Column(
-            name = "city",
-            nullable = false
-    )
-    private String city;
-
-    @Column(
-            name = "voivodeship",
-            nullable = false
-    )
-    private String voivodeship;
-
-    @Column(
-            name = "street",
-            nullable = false
-    )
+    @Column(name = "street")
     private String street;
 
-    @Column(
-            name = "additional_information",
-            nullable = false,
-            length = 255
-    )
-    private String additionalInformation;
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "state")
+    private String state;
+
+    @Column(name = "country")
+    private String country;
+
+    @PostalCode
+    @Column(name = "zip_code")
+    private String zipCode;
+
+    @OneToOne
+    @PrimaryKeyJoinColumn
+    private Order order;
 }
