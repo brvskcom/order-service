@@ -17,10 +17,6 @@ spring:
     show-sql: true
   kafka:
     bootstrap-servers: localhost:9092
-    template:
-      default-topic: notificationTopic
-    producer:
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 eureka:
   client:
     service-url:

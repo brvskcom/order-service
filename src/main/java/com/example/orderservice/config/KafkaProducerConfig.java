@@ -1,5 +1,6 @@
 package com.example.orderservice.config;
 
+import com.brvsk.commons.event.OrderNotificationMessage;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,13 +28,13 @@ public class KafkaProducerConfig {
         return props;
     }
     @Bean
-    public ProducerFactory<String, Object> producerFactory() {
+    public ProducerFactory<String, OrderNotificationMessage> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     @Bean
-    public KafkaTemplate<String, Object> kafkaTemplate(
-            ProducerFactory<String, Object> producerFactory
+    public KafkaTemplate<String, OrderNotificationMessage> kafkaTemplate(
+            ProducerFactory<String, OrderNotificationMessage> producerFactory
     ) {
         return new KafkaTemplate<>(producerFactory);
     }

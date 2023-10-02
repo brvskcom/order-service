@@ -2,6 +2,7 @@ package com.example.orderservice.purchase;
 
 import com.brvsk.commons.event.MailNotificationType;
 import com.brvsk.commons.event.OrderEvent;
+import com.brvsk.commons.event.OrderNotificationMessage;
 import com.example.orderservice.customer.Customer;
 import com.example.orderservice.customer.CustomerRepository;
 import com.example.orderservice.item.OrderItem;
@@ -19,7 +20,7 @@ import java.util.UUID;
 public class PurchaseService {
 
     private final CustomerRepository customerRepository;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, OrderNotificationMessage> kafkaTemplate;
 
     @Transactional
     public PurchaseResponse placeOrder(Purchase purchase){
@@ -39,11 +40,10 @@ public class PurchaseService {
 
         customerRepository.save(customer);
 
-        // TODO: 9/29/2023 customer need to pass an email
-        String fakeUserEmail = "kacpersjuszb@gmail.com";
-
-        OrderEvent orderEvent = new OrderEvent(fakeUserEmail, orderTrackingNumber, MailNotificationType.ORDER_PLACED);
-        kafkaTemplate.send("notificationTopic", orderEvent);
+        String customerEmail = purchase.getCustomer().getEmail();
+        String mailNotificationTypeString = MailNotificationType.ORDER_PLACED.toString();
+        OrderNotificationMessage orderNotificationMessage = new OrderNotificationMessage(customerEmail, orderTrackingNumber, mailNotificationTypeString);
+        kafkaTemplate.send("notificationTopic", orderNotificationMessage);
 
         return new PurchaseResponse(orderTrackingNumber);
     }
