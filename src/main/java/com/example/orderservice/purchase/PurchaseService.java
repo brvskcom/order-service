@@ -1,8 +1,6 @@
 package com.example.orderservice.purchase;
 
-import com.brvsk.commons.event.MailNotificationType;
-import com.brvsk.commons.event.OrderEvent;
-import com.brvsk.commons.event.OrderNotificationMessage;
+import com.brvsk.commons.event.*;
 import com.example.orderservice.customer.Customer;
 import com.example.orderservice.customer.CustomerRepository;
 import com.example.orderservice.item.OrderItem;
@@ -20,7 +18,8 @@ import java.util.UUID;
 public class PurchaseService {
 
     private final CustomerRepository customerRepository;
-    private final KafkaTemplate<String, OrderNotificationMessage> kafkaTemplate;
+    private final KafkaTemplate<String, OrderNotificationMessage> kafkaMailTemplate;
+    private final KafkaTemplate<String, OrderSMSMessage> kafkaSmsTemplate;
 
     @Transactional
     public PurchaseResponse placeOrder(Purchase purchase){
@@ -43,7 +42,12 @@ public class PurchaseService {
         String customerEmail = purchase.getCustomer().getEmail();
         String mailNotificationTypeString = MailNotificationType.ORDER_PLACED.toString();
         OrderNotificationMessage orderNotificationMessage = new OrderNotificationMessage(customerEmail, orderTrackingNumber, mailNotificationTypeString);
-        kafkaTemplate.send("notificationTopic", orderNotificationMessage);
+        kafkaMailTemplate.send("notificationTopic", orderNotificationMessage);
+
+        String trailNumber = "+48664910049";
+        String orderSMSTypeString = OrderSMSType.ORDER_PLACED.toString();
+        OrderSMSMessage orderSMSMessage = new OrderSMSMessage(trailNumber,orderTrackingNumber, orderSMSTypeString);
+        kafkaSmsTemplate.send("smsNotificationTopic", orderSMSMessage);
 
         return new PurchaseResponse(orderTrackingNumber);
     }
