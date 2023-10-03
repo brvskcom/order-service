@@ -1,6 +1,6 @@
 package com.example.orderservice.config;
 
-import com.brvsk.commons.event.OrderNotificationMessage;
+import com.brvsk.commons.event.OrderMailMessage;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaProducerConfig {
+public class KafkaOrderMailProducerConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -28,13 +28,13 @@ public class KafkaProducerConfig {
         return props;
     }
     @Bean
-    public ProducerFactory<String, OrderNotificationMessage> producerFactory() {
+    public ProducerFactory<String, OrderMailMessage> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     @Bean
-    public KafkaTemplate<String, OrderNotificationMessage> kafkaTemplate(
-            ProducerFactory<String, OrderNotificationMessage> producerFactory
+    public KafkaTemplate<String, OrderMailMessage> kafkaTemplate(
+            ProducerFactory<String, OrderMailMessage> producerFactory
     ) {
         return new KafkaTemplate<>(producerFactory);
     }

@@ -18,7 +18,7 @@ import java.util.UUID;
 public class PurchaseService {
 
     private final CustomerRepository customerRepository;
-    private final KafkaTemplate<String, OrderNotificationMessage> kafkaMailTemplate;
+    private final KafkaTemplate<String, OrderMailMessage> kafkaMailTemplate;
     private final KafkaTemplate<String, OrderSMSMessage> kafkaSmsTemplate;
 
     @Transactional
@@ -32,7 +32,7 @@ public class PurchaseService {
         order.setOrderTrackingNumber(orderTrackingNumber);
 
         Set<OrderItem> orderItems = purchase.getOrderItems();
-        orderItems.forEach(item -> order.add(item));
+        orderItems.forEach(order::add);
 
         Customer customer = purchase.getCustomer();
         customer.add(order);
@@ -40,9 +40,9 @@ public class PurchaseService {
         customerRepository.save(customer);
 
         String customerEmail = purchase.getCustomer().getEmail();
-        String mailNotificationTypeString = MailNotificationType.ORDER_PLACED.toString();
-        OrderNotificationMessage orderNotificationMessage = new OrderNotificationMessage(customerEmail, orderTrackingNumber, mailNotificationTypeString);
-        kafkaMailTemplate.send("notificationTopic", orderNotificationMessage);
+        String mailNotificationTypeString = OrderMailType.ORDER_PLACED.toString();
+        OrderMailMessage orderMailMessage = new OrderMailMessage(customerEmail, orderTrackingNumber, mailNotificationTypeString);
+        kafkaMailTemplate.send("mailNotificationTopic", orderMailMessage);
 
         String trailNumber = "+48664910049";
         String orderSMSTypeString = OrderSMSType.ORDER_PLACED.toString();
