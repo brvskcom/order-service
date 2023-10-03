@@ -57,6 +57,17 @@ public class Customer {
     )
     private String email;
 
+    @Column(
+            name = "phone_number",
+            nullable = true,
+            updatable = false
+    )
+    @PhoneNumber
+    private String phoneNumber;
+
+    private boolean mailNotification;
+    private boolean smsNotification;
+
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private Set<Order> orders = new HashSet<>();
 

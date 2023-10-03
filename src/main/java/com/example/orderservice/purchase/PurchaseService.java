@@ -39,17 +39,31 @@ public class PurchaseService {
 
         customerRepository.save(customer);
 
-        String customerEmail = purchase.getCustomer().getEmail();
+        sendNotifications(customer, orderTrackingNumber);
+
+        return new PurchaseResponse(orderTrackingNumber);
+    }
+
+    private void sendNotifications(Customer customer, String orderTrackingNumber){
+        if (customer.isMailNotification()){
+            sendOrderMailMessage(customer.getEmail(), orderTrackingNumber);
+        }
+
+        if (customer.isSmsNotification()){
+            sendOrderSMSMessage(customer.getPhoneNumber(), orderTrackingNumber);
+        }
+
+    }
+
+    private void sendOrderMailMessage(String customerEmail, String orderTrackingNumber){
         String mailNotificationTypeString = OrderMailType.ORDER_PLACED.toString();
         OrderMailMessage orderMailMessage = new OrderMailMessage(customerEmail, orderTrackingNumber, mailNotificationTypeString);
         kafkaMailTemplate.send("mailNotificationTopic", orderMailMessage);
-
-        String trailNumber = "+48664910049";
+    }
+    private void sendOrderSMSMessage(String customerPhoneNumber, String orderTrackingNumber){
         String orderSMSTypeString = OrderSMSType.ORDER_PLACED.toString();
-        OrderSMSMessage orderSMSMessage = new OrderSMSMessage(trailNumber,orderTrackingNumber, orderSMSTypeString);
+        OrderSMSMessage orderSMSMessage = new OrderSMSMessage(customerPhoneNumber,orderTrackingNumber, orderSMSTypeString);
         kafkaSmsTemplate.send("smsNotificationTopic", orderSMSMessage);
-
-        return new PurchaseResponse(orderTrackingNumber);
     }
 
     private String generateOrderTrackingNumber() {
