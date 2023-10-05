@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "OrderItem")
@@ -37,13 +39,13 @@ public class OrderItem {
     private String imageUrl;
 
     @Column(name = "unit_price")
-    private String unitPrice;
+    private BigDecimal unitPrice;
 
     @Column(name = "quantity")
-    private String quantity;
+    private int quantity;
 
     @Column(name = "product_id")
-    private String productId;
+    private Long productId;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
