@@ -3,6 +3,7 @@ package com.example.orderservice.purchase;
 import com.brvsk.commons.clients.payment.PaymentClient;
 import com.brvsk.commons.clients.payment.PaymentRequest;
 import com.brvsk.commons.clients.payment.PaymentResponse;
+import com.brvsk.commons.clients.product.ProductClient;
 import com.brvsk.commons.event.*;
 import com.example.orderservice.address.Address;
 import com.example.orderservice.customer.Customer;
@@ -29,6 +30,7 @@ public class PurchaseService {
     private final KafkaTemplate<String, OrderMailMessage> kafkaMailTemplate;
     private final KafkaTemplate<String, OrderSMSMessage> kafkaSmsTemplate;
     private final PaymentClient paymentClient;
+    private final ProductClient productClient;
 
     @Transactional
     public PurchaseResponse placeOrder(Purchase purchase){
@@ -60,6 +62,15 @@ public class PurchaseService {
         PaymentResponse paymentResponse = paymentClient.processPayment(paymentRequest);
         order.setOrderStatus(OrderStatus.PAYED);
         orderRepository.save(order);
+
+        order.getOrderItems().forEach(
+                orderItem -> {
+
+                    Long productId = orderItem.getProductId();
+                    int orderItemQuantity = orderItem.getQuantity();
+                    productClient.decreaseAmountOfProducts(productId,orderItemQuantity);
+                }
+        );
 
         return paymentResponse;
     }
