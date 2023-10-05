@@ -1,5 +1,8 @@
 package com.example.orderservice.purchase;
 
+
+import com.brvsk.commons.clients.payment.PaymentRequest;
+import com.brvsk.commons.clients.payment.PaymentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,5 +22,13 @@ public class PurchaseController {
 
         return purchaseResponse;
     }
+
+    @PostMapping("/pay")
+    public PaymentResponse payForOrder(
+            @RequestBody PaymentRequest paymentRequest,
+            @RequestParam Long orderId){
+        return purchaseService.payForOrder(paymentRequest, orderId);
+    }
+
 
 }
