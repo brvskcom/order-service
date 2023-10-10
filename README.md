@@ -18,6 +18,7 @@ This service allows customers to place orders. Additionally, the service communi
 - placing orders
 - paying for orders via payment-service (HTTP communication)
 - sending notification via notification-service (Kafka)
+- saving orders in the database
 #### To-do
 - communication with the courier company's API
 - creating a pdf label
